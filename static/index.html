@@ -1,0 +1,185 @@
+<!-- static/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home IoT Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-home-alt sidebar-icon"></i>
+            <h3>Smart Home</h3>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+            <li><i class="fas fa-lightbulb"></i> Devices</li>
+            <li><i class="fas fa-chart-line"></i> Analytics</li>
+            <li><i class="fas fa-cog"></i> Settings</li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>AI-MQTT System</p>
+            <small>v1.0.0</small>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <nav class="top-navbar">
+            <div class="navbar-left">
+                <button id="sidebar-toggle" class="btn btn-sm"><i class="fas fa-bars"></i></button>
+                <h1 class="page-title">IoT Dashboard</h1>
+            </div>
+            <div class="navbar-right">
+                <div class="system-status">
+                    <span class="status-indicator online"></span> System Online
+                </div>
+                <div class="time-display" id="current-time">00:00:00</div>
+            </div>
+        </nav>
+
+        <div class="dashboard-summary">
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fas fa-lightbulb"></i></div>
+                <div class="summary-details">
+                    <h3>2</h3>
+                    <p>Active Devices</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fas fa-bolt"></i></div>
+                <div class="summary-details">
+                    <h3 id="total-power">0</h3>
+                    <p>Power Usage (W)</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fas fa-walking"></i></div>
+                <div class="summary-details">
+                    <h3 id="motion-count">0</h3>
+                    <p>Motion Events</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fas fa-clock"></i></div>
+                <div class="summary-details">
+                    <h3 id="uptime">0:00</h3>
+                    <p>System Uptime</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row device-cards">
+            <div class="col-md-6">
+                <div class="device-card" id="switch-card">
+                    <div class="device-header">
+                        <div class="device-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="device-title">
+                            <h5>Smart Switch</h5>
+                            <span class="device-subtitle">switch-1</span>
+                        </div>
+                        <div class="device-controls">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="switch-toggle">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="device-body">
+                        <div class="device-status" id="switch-status">Loading...</div>
+                        <div class="device-brightness">
+                            <label for="brightness-slider">
+                                <i class="fas fa-sun"></i> Brightness: <span id="brightness-value">50</span>%
+                            </label>
+                            <input type="range" class="form-range" id="brightness-slider" min="0" max="100" value="50">
+                        </div>
+                        <div class="device-power">
+                            <div class="power-meter">
+                                <div class="power-fill" id="power-fill" style="width: 0%;"></div>
+                            </div>
+                            <div class="power-label">
+                                Power: <span id="power-value">0</span> W
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="device-card" id="motion-card">
+                    <div class="device-header">
+                        <div class="device-icon">
+                            <i class="fas fa-running"></i>
+                        </div>
+                        <div class="device-title">
+                            <h5>Motion Detector</h5>
+                            <span class="device-subtitle">motion-1</span>
+                        </div>
+                        <div class="device-status-badge" id="motion-badge">
+                            No Motion
+                        </div>
+                    </div>
+                    <div class="device-body">
+                        <div class="device-status" id="motion-status">Loading...</div>
+                        <div class="location-selector">
+                            <label for="location-select">
+                                <i class="fas fa-map-marker-alt"></i> Location:
+                            </label>
+                            <select class="form-select" id="location-select">
+                                <option value="living_room">Living Room</option>
+                                <option value="bedroom">Bedroom</option>
+                                <option value="kitchen">Kitchen</option>
+                                <option value="bathroom">Bathroom</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary w-100 mt-3" id="simulate-motion">
+                            <i class="fas fa-walking"></i> Simulate Motion
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="analytics-card">
+                    <div class="analytics-header">
+                        <h5><i class="fas fa-chart-pie"></i> Energy Analytics</h5>
+                        <button class="btn btn-sm btn-primary" id="run-analytics">
+                            <i class="fas fa-sync"></i> Run Analysis
+                        </button>
+                    </div>
+                    <div class="analytics-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div id="analytics-results">
+                                    <div class="placeholder-text">Run analysis to see energy consumption data</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="recommendations-panel">
+                                    <h6><i class="fas fa-lightbulb"></i> Recommendations</h6>
+                                    <ul id="recommendations-list">
+                                        <li>No recommendations yet</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+</html>

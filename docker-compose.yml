@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+
+  intermediary:
+    build: .
+    container_name: ai-iot-intermediary
+    depends_on:
+      - mosquitto
+      - redis
+    ports:
+      - "8000:8000"
+    environment:
+      - MQTT_BROKER=mosquitto
+      - REDIS_HOST=redis
+    volumes:
+      - ./:/app
+
+  ai-agents:
+    build: .
+    container_name: ai-agents
+    depends_on:
+      - intermediary
+    environment:
+      - INTERMEDIARY_URL=http://intermediary:8000
+    command: python -m ai_agents.main
+
+  iot-simulator:
+    build: .
+    container_name: iot-devices
+    depends_on:
+      - mosquitto
+    environment:
+      - MQTT_BROKER=mosquitto
+    command: python -m iot_devices.simulator
+
+volumes:
+  mosquitto-data:
+  mosquitto-log:
